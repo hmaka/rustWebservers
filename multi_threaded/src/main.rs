@@ -23,9 +23,7 @@ fn handle_connection(mut stream: TcpStream) {
 
     let request_line = http_request.remove(0);
     let (status_line, filename) = if request_line == "GET / HTTP/1.1" {
-        ("HTTP/1.1 200 OK", "hello.html")
     } else {
-        ("HTTP/1.1 404 NOT FOUND", "404.html")
     };
     let contents = std::fs::read_to_string(filename).unwrap();
     let content_length = contents.len();
