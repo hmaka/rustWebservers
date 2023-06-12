@@ -1,25 +1,32 @@
 use std::{
     io::{prelude::*, BufReader},
     net::{TcpListener, TcpStream},
+    sync::{Arc, Mutex},
     thread,
 };
 
 fn main() {
     println!("Listening on port 7878");
     let listner = TcpListener::bind("127.0.0.1:7878").unwrap();
-    let mut thread_count: usize = 0;
+    let mut thread_count = Arc::new(Mutex::new(0 as usize));
     let max_threads: usize = 2;
 
     let mut handles = vec![];
 
     for stream in listner.incoming() {
         let stream = stream.unwrap();
-        if thread_count < max_threads {
+        let mut temp_thread_count = thread_count.lock().unwrap();
+
+        if *temp_thread_count < max_threads {
+            *temp_thread_count += 1;
+            drop(temp_thread_count);
+            let thread_count = Arc::clone(&thread_count);
             let handle = thread::spawn(move || {
                 handle_connection(stream);
+                let mut thread_count = thread_count.lock().unwrap();
+                *thread_count -= 1;
             });
             handles.push(handle);
-            thread_count += 1;
         }
     }
     for handle in handles {
