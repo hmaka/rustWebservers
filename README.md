@@ -10,5 +10,3 @@ Each Folder contains a different web server implementation.
    
 3. The "async_tokio" folder contains a more involved chat-server implementation that allows for any number of users to connect and chat with each other. The project uses
    the tokio async runtime.
-   
-4. The "async_warp" folder contains a simple API build using the tokio async runtime and the warp framework for simplicity. 
